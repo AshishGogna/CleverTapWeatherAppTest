@@ -14,7 +14,7 @@ public class WeatherAPICommunicator : MonoBehaviour
     #endregion
 
     #region Private declarations
-    private const String ENDPOINT = "https://api.open-meteo.com/v1/forecast?latitude=12.92&longitude=77.66&timezone=IST&daily=temperature_2m_max&current_weather=true";
+    private const String ENDPOINT = "https://api.open-meteo.com/v1/forecast?latitude={0}&longitude={1}&timezone=IST&daily=temperature_2m_max&current_weather=true";
     #endregion
 
     #region Unity lifecycle functions
@@ -25,16 +25,6 @@ public class WeatherAPICommunicator : MonoBehaviour
     #endregion
 
     #region Public functions
-    //public static float GetCurrentWeather(string longitude, string latitude)
-    //{
-    //    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(ENDPOINT);
-    //    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-    //    StreamReader reader = new StreamReader(response.GetResponseStream());
-    //    string jsonResponse = reader.ReadToEnd();
-    //    WeatherAPIResponse wares = JsonUtility.FromJson<WeatherAPIResponse>(jsonResponse);
-    //    return wares.current_weather.temperature;
-    //}
-
     public void GetCurrentWeather(string longitude, string latitude, UnityAction<float> callback)
     {
         StartCoroutine(GetCurrentWeatherRoutine(longitude, latitude, (t) => { callback(t); }));
@@ -42,7 +32,8 @@ public class WeatherAPICommunicator : MonoBehaviour
 
     public IEnumerator GetCurrentWeatherRoutine(string longitude, string latitude, UnityAction<float> callback)
     {
-        UnityWebRequest request = UnityWebRequest.Get(ENDPOINT);
+        string url = string.Format(ENDPOINT, latitude, longitude);
+        UnityWebRequest request = UnityWebRequest.Get(url);
         yield return request.SendWebRequest();
 
         if (request.isNetworkError || request.isHttpError)

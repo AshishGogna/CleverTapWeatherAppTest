@@ -18,6 +18,11 @@ public class HUD : MonoBehaviour
             fetchingText.SetActive(true);
             LocationService.instance.FindLocation(() =>
             {
+                if (string.IsNullOrEmpty(LocationService.instance.longitude) || string.IsNullOrEmpty(LocationService.instance.latitude))
+                {
+                    return;
+                }
+
                 WeatherAPICommunicator.instance.GetCurrentWeather(LocationService.instance.longitude, LocationService.instance.latitude, (temp) =>
                 {
                     string text = string.Format("Current temperature: {0}°C", temp);
